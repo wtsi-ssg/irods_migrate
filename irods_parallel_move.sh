@@ -70,7 +70,7 @@ fi
 mfs_cib=$(ilsresc -l "$1" | sed -ne 's/^context: minimum_free_space_for_create_in_bytes=//p')
 res_size=$(imeta ls -R "$1" resource_size | sed -ne 's/value: //p')
 if [ "$((mfs_cib / 1024))" -lt "$((res_size - 1))" ]; then
-    echo "SOURCE resource $1 should be closed using mark_resource_unusable_with_minimum_free_space_for_create_in_bytes_no_izonereport.py"
+    echo "SOURCE resource $1 should be closed using mark_resource_unusable.py"
     exit 1
 fi
 
