@@ -26,17 +26,17 @@ if [ "$#" -ne "3" ]; then
     exit 1
 fi
 
-#Must run as a rodsadmin user
+# Must run as a rodsadmin user
 if [ ! -O /etc/irods/server_config.json ]; then
     echo "Must be run as the rodsadmin user"
     exit 1
 fi
 
-#Function that does the work
+# Function that does the work
 phym()
 {
 for i in $(seq 0 8); do
-    #iphymv return value isn't very useful, so inspect stderr
+    # iphymv return value isn't very useful, so inspect stderr
     msg=$(iphymv "$@" 2>&1)
     rv="$?"
     if [ "$rv" -eq 0 ]; then
@@ -48,12 +48,12 @@ for i in $(seq 0 8); do
 	echo "$msg"
 	if [[ "$msg" =~ "No space left on device" ]]; then
 	    echo "Target full, stopping parallel"
-	    #TERM means "do not start any new jobs"
+	    # TERM means "do not start any new jobs"
 	    kill -TERM "$PARALLEL_PID"
 	    return "$rv"
 	elif [[ "$msg" =~ "USER_CHKSUM_MISMATCH" ]]; then
-	    return "$rv" #no point retrying a checksum failure
-	#Assume other failures are transient, try to backoff
+	    return "$rv" # no point retrying a checksum failure
+	# Assume other failures are transient, try to backoff
 	elif [ "$i" -lt 8 ]; then
 	    sleep "$((2**i))"
 	else

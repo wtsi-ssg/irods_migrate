@@ -45,8 +45,8 @@ fi
 
 irodsdir="${prefix}$1"
 
-#Calculate filesystem size by asking stat for the block count * size
-#Which is a bash arithmetic expression
+# Calculate filesystem size by asking stat for the block count * size
+# which is a bash arithmetic expression
 if [ -d "$irodsdir" ]; then
     dirsize=$(( $(stat -f --format='%b*%S' "$irodsdir") ))
     echo "Setting minimum free space for $1 to $dirsize bytes"

@@ -29,20 +29,20 @@
 set -e
 set -o pipefail
 
-#Set the CONTINUE env-var to any non-empty value if you want the dest
-#resource left out-of-tree when migration is completed (e.g. because
-#you want to move a second resource there)
+# Set the CONTINUE env-var to any non-empty value if you want the dest
+# resource left out-of-tree when migration is completed (e.g. because
+# you want to move a second resource there)
 if [ -n "$CONTINUE" ]; then
     cont="true"
 else
     cont="false"
 fi
 
-#Where to put orphan resources when finished
-#set with the ORPHANHOME environment variable
+# Where to put orphan resources when finished
+# set with the ORPHANHOME environment variable
 orphan_home="${ORPHANHOME:-green7}"
 
-#Must run as a rodsadmin user
+# Must run as a rodsadmin user
 if [ ! -O /etc/irods/server_config.json ]; then
     echo "Must be run as the rodsadmin user"
     exit 1
@@ -85,12 +85,12 @@ find_parent()
 	echo "orphan"
 	return
     fi
-    #https://github.com/irods/irods/issues/5069
+    # https://github.com/irods/irods/issues/5069
     par=$(iquest "SELECT RESC_NAME WHERE RESC_ID = '$parid'" | sed -ne 's/^RESC_NAME = //p')
     echo "$par"
 }
 
-#Called if something goes wrong.
+# Called if something goes wrong.
 clearup()
 {
     rm -f "$listpath"
