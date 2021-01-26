@@ -24,7 +24,7 @@ It aims to be:
 
 - [[https://www.gnu.org/software/parallel/][GNU Parallel]], in Debian-derived distributions this is the "parallel"
   package. NB that the ~parallel~ from ~moreutils~ will not work!
-- iRODS version 4.2.x (tested with 4.2.8) or later; you need to be a
+- iRODS version 4.2.x (tested with 4.2.7) or later; you need to be a
   rodsadmin user
 - Bash
 
@@ -41,7 +41,10 @@ It aims to be:
 - Make the source resource unavailable for writes (otherwise you risk
   iRODS continuing to fill the resource as you are trying to empty
   it!), by running ~mark_resource_unusable.sh RESOURCENAME~ on the
-  consumer system which hosts the resource
+  consumer system which hosts the resource. 
+  N.B. This assumes that the resource has been configured to have
+  the ~freespace~ property metadata already set 
+  as per [[UnixFileSystem Resource][https://docs.irods.org/4.2.7/plugins/composable_resources/#unixfilesystem]].
 - If the destination resource is not currently in the resource tree,
   ensure you know where you want it to end up
 
