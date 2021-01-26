@@ -1,0 +1,98 @@
+* Scripts for bulk migration of iRODS data using parallel iphymv
+
+This is a set of scripts to enable the bulk migration of data from one
+iRODS resource to another, using parallel ~iphymv~.
+
+It aims to be:
+- safe (i.e. not lose data even in the face of errors)
+- simple to operate
+- tunable (in terms of the number of parallel moves going at once)
+- well-behaved (it will exponentially back-off in the face of
+  transient errors)
+
+** Outline of operation
+
+- Operator marks source resource unavailable for future writes
+- Source (and, if necessary, destination) resource is removed from the
+  resource tree
+- GNU parallel is used to run a tunable number of ~iphymv~ processes
+  to move data from source to destination resource
+- Source (and, unless CONTINUE is specified, destination) resource is
+  returned to the resource tree 
+
+** Requirements
+
+- [[https://www.gnu.org/software/parallel/][GNU Parallel]], in Debian-derived distributions this is the "parallel"
+  package. NB that the ~parallel~ from ~moreutils~ will not work!
+- iRODS version 4.2.x (tested with 4.2.8) or later; you need to be a
+  rodsadmin user
+- Bash
+
+** Setup
+
+- Copy ~irods_backoff_move.sh~ and ~irods_parallel_move.sh~ to the
+  system you want to control the migration from (the zone's provider
+  is an obvious choice). They need to be in the same directory as each
+  other and executable by the rodsadmin user (e.g. use that user's home
+  directory).
+- Put the number of parallel runs you want into a file called
+  ~.parallel-num~ in the rodsadmin user's home directory; 8 is a
+  reasonable starting point e.g. ~echo 8 >~/.parallel-num~
+- Make the source resource unavailable for writes (otherwise you risk
+  iRODS continuing to fill the resource as you are trying to empty
+  it!), by running ~mark_resource_unusable.sh RESOURCENAME~ on the
+  consumer system which hosts the resource
+- If the destination resource is not currently in the resource tree,
+  ensure you know where you want it to end up
+
+** Operation
+
+- If you plan to perform another migration to the destination resource
+  after this one, you'll want it left out of the resource tree (so
+  nothing else starts filling it up), so set the ~CONTINUE~
+  environment variable to a non-empty value (i.e. 
+  ~CONTINUE=true ./irods_parallel_move.sh ...~)
+- Otherwise, if the destination resource is not currently in the tree,
+  you can set the ~ORPHANHOME~ environment variable to the name of the
+  resource you would like it put under at the end of a successful
+  migration.
+- ~./irods_parallel_move.sh SOURCE DESTINATION~
+- A log file location is output, this contains which resources the
+  source (and, if relevant, destination) were taken from
+- Once the list of objects has been calculated, a Parallel logfile
+  location is output, which you can use to check for failed objects
+  (see below)
+- Parallel outputs a status line telling you how far it has got and
+  giving an estimate of the time remaining.
+- If parallel fails or is stopped, the script outputs its log file
+  locations again and leaves source and destination out of the tree
+  (but also tells you how to put them back into the tree)
+- The exit status (e.g. ~echo $?~) will tell you about what happened: 
+   - 0 :: successful completion
+   - 1-100 :: that many jobs failed (parallel gives up if 99 jobs
+              fail)
+   - 255 :: some other error
+
+** Controlling parallel while a migration is in progress
+
+You can control how many ~iphymv~ operations are run at once while the
+migration is running.
+
+- to change the number of jobs :: edit ~.parallel-num~; the number in
+     that file is checked whenever a job completes. If you reduce it,
+     running jobs are not killed, but new ones are simply not started
+     until the wanted number of jobs has been reached
+- to stop any more jobs from starting :: send ~SIGTERM~ to parallel
+     e.g. with ~killall -TERM parallel~. This tells parallel to not
+     start any new jobs, but won't kill jobs in-flight
+- to stop even jobs in-flight :: break (i.e. ~^C~) parallel
+
+** Extracting a list of failed objects
+
+The ~parallel~ log file has a lot of details about the run jobs and
+their outcomes. If you just want a list of objects that failed, you
+can extract them with awk:
+: cat parallel_logfile | awk -F '\t' '$7>0{print $9}' | awk '{print $4}'
+
+These can then be inspected with e.g. ~ils -L~ to investigate why they
+failed to migrate (a checksum failure is most likely).
