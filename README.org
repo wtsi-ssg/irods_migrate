@@ -43,7 +43,7 @@ It aims to be:
   it!), by running ~mark_resource_unusable.sh RESOURCENAME~ on the
   consumer system which hosts the resource. 
   N.B. This assumes that the resource has been configured to have
-  the ~freespace~ property metadadata already set 
+  the ~freespace~ property metadata already set 
   as per [UnixFileSystem Resource](https://docs.irods.org/4.2.7/plugins/composable_resources/#unixfilesystem).
 - If the destination resource is not currently in the resource tree,
   ensure you know where you want it to end up
