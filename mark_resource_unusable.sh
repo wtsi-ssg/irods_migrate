@@ -4,7 +4,8 @@
 # unusable on a named resource hosted locally on an iRES.
 
 # The minimum_free_space_for_create_in_bytes resource context is set
-# to the amount of disk space of the filesystem
+# to the amount of disk space of the filesystem.
+# see https://docs.irods.org/4.2.7/plugins/composable_resources/#unixfilesystem
 
 # Needs to be run by a user with rodsadmin.
 
