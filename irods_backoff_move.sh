@@ -4,7 +4,7 @@
 # Call thus:
 # irods_backof_move.sh SOURCE DEST object
 
-# Copyright (C) 2020-2021 Genome Research Limited
+# Copyright (C) 2020,2021 Genome Research Limited
 # 
 # Author: Matthew Vernon <mv3@sanger.ac.uk>
 #

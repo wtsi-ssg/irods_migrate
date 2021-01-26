@@ -9,7 +9,7 @@
 
 # Needs to be run by a user with rodsadmin.
 
-# Copyright (C) 2019-2021 Genome Research Limited
+# Copyright (C) 2019 Genome Research Limited
 # 
 # Author: John Constable <jc18@sanger.ac.uk>
 #

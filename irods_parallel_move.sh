@@ -9,7 +9,7 @@
 # Control parallelisation with the value of ~/.sidecar-num
 # Have irods_backoff_move.sh in pwd.
 
-# Copyright (C) 2020-2021 Genome Research Limited
+# Copyright (C) 2020,2021 Genome Research Limited
 # 
 # Author: Matthew Vernon <mv3@sanger.ac.uk>
 #
