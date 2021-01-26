@@ -6,7 +6,7 @@
 # 2) parallel-iphymv objects from SOURCE to DEST
 # 3) move SOURCE and DEST back to where they were
 
-# Control parallelisation with the value of ~/.sidecar-num
+# Control parallelisation with the value of ~/.parallel-num
 # Have irods_backoff_move.sh in pwd.
 
 # Copyright (C) 2020,2021 Genome Research Limited
@@ -55,8 +55,8 @@ if [ -z "$1" ] || [ -z "$2" ]; then
     echo "Both resources must be non-empty strings!"
     exit 1
 fi
-if [ ! -s ~/.sidecar-num ]; then
-    echo "Put the number of parallel writes you want into ~/.sidecar-num"
+if [ ! -s ~/.parallel-num ]; then
+    echo "Put the number of parallel writes you want into ~/.parallel-num"
     exit 1
 fi
 if [ ! -x irods_backoff_move.sh ]; then
@@ -142,7 +142,7 @@ iquest --no-page "%s/%s" "select COLL_NAME, DATA_NAME where DATA_RESC_NAME = '${
 
 parlog=$(mktemp)
 echo "Parallel logfile is $parlog"
-parallel --bar --halt soon,fail=99 --joblog "$parlog" -j ~/.sidecar-num ./irods_backoff_move.sh "$sr" "$dr" '{}' :::: "$listpath"
+parallel --bar --halt soon,fail=99 --joblog "$parlog" -j ~/.parallel-num ./irods_backoff_move.sh "$sr" "$dr" '{}' :::: "$listpath"
 
 echo -n "Putting $sr back under $sr_parent"
 if [ "$cont" = "false" ]; then
