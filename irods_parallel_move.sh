@@ -60,7 +60,7 @@ if [ ! -s ~/.parallel-num ]; then
     exit 1
 fi
 if [ ! -x irods_backoff_move.sh ]; then
-    echo "irods_backoff_move.sh must be extant and executible in ."
+    echo "irods_backoff_move.sh must be extant and executable in ."
     exit 1
 fi
 
