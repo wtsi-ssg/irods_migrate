@@ -51,8 +51,10 @@ for i in $(seq 0 8); do
 	    # TERM means "do not start any new jobs"
 	    kill -TERM "$PARALLEL_PID"
 	    return "$rv"
-	elif [[ "$msg" =~ "USER_CHKSUM_MISMATCH" ]]; then
-	    return "$rv" # no point retrying a checksum failure
+	# checksum mismatch or absent src not worth retrying
+	elif [[ "$msg" =~ "USER_CHKSUM_MISMATCH" ]] ||
+                 [[ "$msg" =~ srcPath.*does\ not\ exist ]]; then
+            return "$rv"
 	# Assume other failures are transient, try to backoff
 	elif [ "$i" -lt 8 ]; then
 	    sleep "$((2**i))"
